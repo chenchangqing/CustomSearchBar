@@ -1,0 +1,14 @@
+PODS:
+  - CustomSearchBar (0.1.0)
+
+DEPENDENCIES:
+  - CustomSearchBar (from `../`)
+
+EXTERNAL SOURCES:
+  CustomSearchBar:
+    :path: ../
+
+SPEC CHECKSUMS:
+  CustomSearchBar: ef162b1e33cdc0da97ae3def7bea97667511795b
+
+COCOAPODS: 0.39.0
