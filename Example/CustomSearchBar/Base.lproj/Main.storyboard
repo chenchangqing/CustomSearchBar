@@ -49,9 +49,16 @@
                             <constraint firstAttribute="trailing" secondItem="zfa-uY-k9l" secondAttribute="trailing" id="i04-B2-Q8R"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Bv0-VI-KTX"/>
+                    <navigationItem key="navigationItem" id="Bv0-VI-KTX">
+                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="7Q6-dw-YNV">
+                            <connections>
+                                <action selector="startSearch:" destination="vXZ-lx-hvc" id="fm9-ez-ieO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="searchBarButtonItem" destination="7Q6-dw-YNV" id="YFw-bu-vc3"/>
                         <outlet property="tblSearchResults" destination="zfa-uY-k9l" id="bil-6N-bC4"/>
                     </connections>
                 </viewController>
