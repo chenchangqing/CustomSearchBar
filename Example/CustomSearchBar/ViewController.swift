@@ -19,10 +19,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var dataArray = [String]()
     
-    var filteredArray = [String]()
-    
-    var shouldShowSearchResults = false
-    
     var searchController: UISearchController!
     var uiSearchBarView: UIView!
     
@@ -90,10 +86,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func configureSearchController() {
-
-        searchController = UISearchController(searchResultsController: nil)
+        
+        let searchResultsController = self.storyboard?.instantiateViewControllerWithIdentifier("SearchResultsNavController")
+        
+        searchController = UISearchController(searchResultsController: searchResultsController)
         searchController.searchResultsUpdater = self
-        searchController.dimsBackgroundDuringPresentation = false
+        searchController.dimsBackgroundDuringPresentation = true
         searchController.hidesNavigationBarDuringPresentation = false
     
     }
@@ -139,24 +137,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if shouldShowSearchResults {
-            return filteredArray.count
-        }
-        else {
-            return dataArray.count
-        }
+        return dataArray.count
     }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("idCell", forIndexPath: indexPath)
         
-        if shouldShowSearchResults {
-            cell.textLabel?.text = filteredArray[indexPath.row]
-        }
-        else {
-            cell.textLabel?.text = dataArray[indexPath.row]
-        }
+        cell.textLabel?.text = dataArray[indexPath.row]
         
         return cell
     }
@@ -169,12 +157,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // MARK: - UISearchBarDelegate functions
     
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        shouldShowSearchResults = true
-        tblSearchResults.reloadData()
-    }
-    
-    
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         
         UIView.animateWithDuration(0.25) { () -> Void in
@@ -183,17 +165,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.searchController.searchBar.resignFirstResponder()
             self.uiSearchBarView.frame = CGRectMake(0, -64, self.view.frame.width, 64)
         }
-        
-        shouldShowSearchResults = false
-        tblSearchResults.reloadData()
     }
     
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        if !shouldShowSearchResults {
-            shouldShowSearchResults = true
-            tblSearchResults.reloadData()
-        }
         
         searchController.searchBar.resignFirstResponder()
     }
@@ -207,14 +182,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         
         // Filter the data array and get only those countries that match the search text.
-        filteredArray = dataArray.filter({ (country) -> Bool in
+        let filteredArray = dataArray.filter({ (country) -> Bool in
             let countryText:NSString = country
             
             return (countryText.rangeOfString(searchString, options: NSStringCompareOptions.CaseInsensitiveSearch).location) != NSNotFound
         })
         
         // Reload the tableview.
-        tblSearchResults.reloadData()
+        
+        print(self.searchController.searchResultsController as? UINavigationController)
+        print((self.searchController.searchResultsController as? UINavigationController)?.topViewController)
+        if let searchResultsController = (self.searchController.searchResultsController as? UINavigationController)?.topViewController as? SearchResultsViewController {
+            
+            searchResultsController.filteredArray = filteredArray
+            searchResultsController.tableView.reloadData()
+        }
     }
 
 }
